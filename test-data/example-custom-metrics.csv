@@ -1,4 +1,4 @@
-Metric Name,Average Custom Metrics / Hour, Max Custom Metrics / Hour
+Metric Name,Average Custom Metrics / Hour,Max Custom Metrics / Hour
 requests.route1.latency.p98,200,200
 requests.route1.errors.p98,200,200
 requests.route1.latency.max,200,200
