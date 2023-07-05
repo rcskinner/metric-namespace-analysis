@@ -162,3 +162,6 @@ cython_debug/
 
 # Pyenv versions
 .python-version
+
+# Data folder
+data/
