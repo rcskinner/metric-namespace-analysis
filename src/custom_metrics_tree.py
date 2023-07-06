@@ -50,12 +50,12 @@ def read_custom_metrics_csv(fn:str) -> pd.DataFrame():
     return df
 
 
-def generate_cm_namespace_tree(cm_df:pd.DataFrame) -> Tree: 
+def generate_cm_namespace_tree(cm_df:pd.DataFrame,data_col:str="average_hourly_custom_metrics") -> Tree: 
     cm_tree = Tree()
     cm_tree.create_node("root","root",data=0)
     for iter, row in cm_df.iterrows():
         custom_metric = row.metric_name
-        usage_data  = row.average_hourly_custom_metrics
+        usage_data  = row[data_col]
         metric_namespace = custom_metric.split(".")
         cm_tree = add_metric_namespace_to_tree(metric_namespace,cm_tree, usage_data)
     return cm_tree
