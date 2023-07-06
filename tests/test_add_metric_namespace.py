@@ -48,8 +48,8 @@ def test_two_root_children():
     t = add_metric_namespace_to_tree(["A"], t)
     t = add_metric_namespace_to_tree(["B"], t) 
 
-    assert t.children("root")[0].identifier == "root.A"
-    assert t.children("root")[1].identifier == "root.B"
+    children = t.children("root") 
+    assert [node.tag for node in children] == ["root.A","root.B"]
 
 
 def test_nested_identifier():
@@ -76,9 +76,8 @@ def test_nested_children():
     t = add_metric_namespace_to_tree(["A","B"],t)
     t = add_metric_namespace_to_tree(["A","C"],t)
 
-    assert len(t.children("root.A")) == 2 
-    assert t.children("root.A")[0].identifier == "root.A.B"
-    assert t.children("root.A")[1].identifier == "root.A.C"
+    children = t.children("root.A")
+    assert [node.tag for node in children] == ["root.A.B", "root.A.C"]
 
 
 def test_unique_id_multiple_tags():
