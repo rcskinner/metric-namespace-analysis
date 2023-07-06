@@ -143,3 +143,29 @@ def test_usage_data_added_to_ancestors():
 
     n = t.get_node("root.A")
     assert n.data == 30
+
+def test_root_usage_data():
+    """Checking that the sum works correcntly with more than 1 outdegree on root.
+    Constructing a slightly more complicated scenario: 
+        root (40)
+          - request   (20)
+            - latency (10)
+            - error   (10)
+          - redis     (10)
+            - hits    (10)
+          - mongo     (10)
+
+          Expecting 40 units from request.latency (10), request.error(10), redis.hits(10), 
+          and mongo (10
+    """
+    t = rooted_tree() 
+
+    # Add all the weighted metrics to the tree 
+    t = add_metric_namespace_to_tree("request","latency",t,usage=10)
+    t = add_metric_namespace_to_tree("request","error",t, usage=10)
+    t = add_metric_namespace_to_tree("redis","hits",t, usage=10)
+    t= add_metric_namespace_to_tree(["mongo"],10)
+    # Get the root node
+    n = t.get_node("root")
+
+    assert n.data == 40
