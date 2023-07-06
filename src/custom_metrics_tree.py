@@ -2,6 +2,27 @@ from treelib import Tree
 import pandas as pd
 
 
+class CustomMetricsTree(Tree):
+
+    
+    def __init__(self, tree=None, deep=False, node_class=None, identifier=None):
+        super().__init__(tree, deep, node_class, identifier)
+
+    def show_data(self):
+        """Override the Node Tags to add the data to the node while printed using .show().
+        Only works with datatypes that can be converted to a str type."""        
+        
+        # Update tags while keeping original tags
+        for node in self.all_nodes():
+            node.tag = node.tag + "  ({data})".format(data=node.data)
+        
+        # Call self.show() after data updates
+        self.show()
+
+        # Update the tacks to hackily preserve state
+        # TODO: set the nodes back to their original tag value to preserve state
+
+
 def update_usage_data(t:Tree,node_id:str,usage:int=0) -> Tree:
     """Add the usage data for that custom metrtic to itself and walk through the ancestors adding to it"""
     t.get_node(node_id).data = usage
@@ -51,7 +72,7 @@ def read_custom_metrics_csv(fn:str) -> pd.DataFrame():
 
 
 def generate_cm_namespace_tree(cm_df:pd.DataFrame,data_col:str="average_hourly_custom_metrics") -> Tree: 
-    cm_tree = Tree()
+    cm_tree = CustomMetricsTree()
     cm_tree.create_node("root","root",data=0)
     for iter, row in cm_df.iterrows():
         custom_metric = row.metric_name
