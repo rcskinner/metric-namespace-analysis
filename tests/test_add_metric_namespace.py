@@ -2,8 +2,6 @@ import pytest
 from treelib import Tree
 from src.custom_metrics_tree import add_metric_namespace_to_tree
 
-from .test_utils import raw_test_data
-
 
 def rooted_tree():
     # Utility function to create a rooted tree
