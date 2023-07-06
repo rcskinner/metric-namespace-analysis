@@ -1,0 +1,9 @@
+Metric Name,Average Custom Metrics / Hour,Max Custom Metrics / Hour
+requests.route1.latency,5,10
+requests.route1.errors,5,10
+requests.route2.latency,5,10
+requests.route2.errors,5,10
+mongo.cache.hits,5,10
+mongo.cache.misses,5,10
+mongo.cache.performance.cpu,5,10
+mongo.cache.performance.ram,5,10
