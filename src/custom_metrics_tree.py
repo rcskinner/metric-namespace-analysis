@@ -46,6 +46,7 @@ def read_custom_metrics_csv(fn:str) -> pd.DataFrame():
         "Average Custom Metrics / Hour": "average_hourly_custom_metrics",
         "Max Custom Metrics / Hour": "max_hourly_custom_metrics"
         })
+    df['metric_name'] = df['metric_name'].astype(pd.StringDtype())
     return df
 
 
