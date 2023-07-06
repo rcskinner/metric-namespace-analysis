@@ -6,7 +6,7 @@ from src.custom_metrics_tree import add_metric_namespace_to_tree
 def rooted_tree():
     # Utility function to create a rooted tree
     t = Tree()
-    t.create_node("root","root")
+    t.create_node("root","root",data=0)
     return t
 
 
@@ -15,7 +15,7 @@ def test_single_node_tag():
     # Create a blank tree
     t = rooted_tree()
     # Add a single node to the tree 
-    t = add_metric_namespace_to_tree(["A"],t)
+    t = add_metric_namespace_to_tree(["A"],t,10)
     n = t.get_node("root.A")
     assert n.tag == "A"
 
@@ -130,7 +130,7 @@ def test_add_order_insensitivity():
 def test_added_usage_data(): 
     """Test that the usage data is added to the individual nodes correctly."""
     t = rooted_tree()
-    t = add_metric_namespace_to_tree(metric_list=["A"], tree=t, usage=10)
+    t = add_metric_namespace_to_tree(metric_list=["A"], tree=t, data=10)
     n = t.get_node("root.A")
     
     assert n.data == 10
@@ -138,8 +138,8 @@ def test_added_usage_data():
 def test_usage_data_added_to_ancestors(): 
     """Checking that the ancestors of a metric have the .data attr updated correctly"""
     t = rooted_tree() 
-    t = add_metric_namespace_to_tree(["A","B"],t, usage=10)
-    t = add_metric_namespace_to_tree(["A","C"],t, usage=20) 
+    t = add_metric_namespace_to_tree(["A","B"],t, data=10)
+    t = add_metric_namespace_to_tree(["A","C"],t, data=20) 
 
     n = t.get_node("root.A")
     assert n.data == 30
@@ -161,10 +161,10 @@ def test_root_usage_data():
     t = rooted_tree() 
 
     # Add all the weighted metrics to the tree 
-    t = add_metric_namespace_to_tree("request","latency",t,usage=10)
-    t = add_metric_namespace_to_tree("request","error",t, usage=10)
-    t = add_metric_namespace_to_tree("redis","hits",t, usage=10)
-    t= add_metric_namespace_to_tree(["mongo"],10)
+    t = add_metric_namespace_to_tree(["request","latency"],t,data=10)
+    t = add_metric_namespace_to_tree(["request","error"],t, data=10)
+    t = add_metric_namespace_to_tree(["redis","hits"],t, data=10)
+    t= add_metric_namespace_to_tree(["mongo"],t,10)
     # Get the root node
     n = t.get_node("root")
 
