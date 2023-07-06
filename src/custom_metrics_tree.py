@@ -2,16 +2,31 @@ from treelib import Tree
 import pandas as pd
 
 
-def add_metric_namespace_to_tree(metric_list:list, tree:Tree) -> Tree:
-    """Given a split list of a metrics namespace, add the """
+def update_usage_data(t:Tree,node_id:str,usage:int=0) -> Tree:
+    """Add the usage data for that custom metrtic to itself and walk through the ancestors adding to it"""
+    t.get_node(node_id).data = usage
+    # Initialize with the first ancestor ID and walk up the tree
+    ancestor_id = t.ancestor(node_id)
+    while ancestor_id is not None:
+        t.get_node(ancestor_id).data += usage
+        # Update the ancestor ID
+        ancestor_id = t.ancestor(ancestor_id)
+    return t
+
+
+def add_metric_namespace_to_tree(metric_list:list, tree:Tree, data:int=0) -> Tree:
     parent="root"
     for element in metric_list:
         node_id = parent + "." + element
         # Check if the element exists in the parent's subtree
         # If it does skip, o.w. add to the tree
         if not tree.subtree(parent).get_node(node_id):
-            tree.create_node(element, node_id, parent=parent)
+            # Initialize a new node with usage data = 0
+            tree.create_node(element, node_id, parent=parent,data=0)
+        # Update the parent ID
         parent = node_id
+    # On the last node_id update the ancestor_id
+    tree = update_usage_data(tree, node_id, data)
     return tree
 
 
