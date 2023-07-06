@@ -42,14 +42,24 @@ def test_single_child():
     assert t.children("root")[0].identifier == "root.A"
 
 
-def test_two_root_children(): 
+def test_two_root_children_ids(): 
     """Testing multiple children can point to the root"""
     t = rooted_tree() 
     t = add_metric_namespace_to_tree(["A"], t)
     t = add_metric_namespace_to_tree(["B"], t) 
 
     children = t.children("root") 
-    assert [node.tag for node in children] == ["root.A","root.B"]
+    assert [node.identifier for node in children] == ["root.A","root.B"]
+
+
+def test_two_root_children_tags(): 
+    """Testing multiple children can point to the root"""
+    t = rooted_tree() 
+    t = add_metric_namespace_to_tree(["A"], t)
+    t = add_metric_namespace_to_tree(["B"], t) 
+
+    children = t.children("root") 
+    assert [node.tag for node in children] == ["A","B"]
 
 
 def test_nested_identifier():
@@ -68,6 +78,14 @@ def test_nesting_child_identifier():
     # Check that B is a child of A
     assert t.children("root.A")[0].identifier == "root.A.B"
 
+def test_nesting_parent_identifier(): 
+    """Test that the nested child has the appropriate parent"""
+    t = rooted_tree() 
+    t = add_metric_namespace_to_tree(["A","B"],t)
+
+    # check that root.A is a parent of root.A.B
+    assert t.parent("root.A.B").identifier == "root.A"
+
 
 def test_nested_children():
     """Checking that nodes will nest correctly, passing in an A --> B 
@@ -77,7 +95,7 @@ def test_nested_children():
     t = add_metric_namespace_to_tree(["A","C"],t)
 
     children = t.children("root.A")
-    assert [node.tag for node in children] == ["root.A.B", "root.A.C"]
+    assert [node.identifier for node in children] == ["root.A.B", "root.A.C"]
 
 
 def test_unique_id_multiple_tags():
@@ -85,7 +103,7 @@ def test_unique_id_multiple_tags():
     Testing to see if """
     t = rooted_tree()
 
-    # Create the first sequenc
+    # Create the first sequence
     t = add_metric_namespace_to_tree(["request1","latency"],t)
     t = add_metric_namespace_to_tree(["request2","latency"],t)
 
@@ -101,11 +119,27 @@ def test_add_order_insensitivity():
         doesn't cause a problem.
         """
     t = rooted_tree()
-
     t = add_metric_namespace_to_tree(["request1","latency"],t)
-    t = add_metric_namespace_to_tree(["mongo","hits"])
-    t = add_metric_namespace_to_tree(["request1","errors"])
-
+    t = add_metric_namespace_to_tree(["mongo","hits"], t)
+    t = add_metric_namespace_to_tree(["request1","errors"],t)
     children = t.children("root.request1")
 
     assert [node.tag for node in children] == ["latency","errors"]
+
+
+def test_added_usage_data(): 
+    """Test that the usage data is added to the individual nodes correctly."""
+    t = rooted_tree()
+    t = add_metric_namespace_to_tree(metric_list=["A"], tree=t, usage=10)
+    n = t.get_node("root.A")
+    
+    assert n.data == 10
+
+def test_usage_data_added_to_ancestors(): 
+    """Checking that the ancestors of a metric have the .data attr updated correctly"""
+    t = rooted_tree() 
+    t = add_metric_namespace_to_tree(["A","B"],t, usage=10)
+    t = add_metric_namespace_to_tree(["A","C"],t, usage=20) 
+
+    n = t.get_node("root.A")
+    assert n.data == 30
